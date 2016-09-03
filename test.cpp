@@ -3,36 +3,38 @@
 #include "QUnit.hpp"
 #include "BoundedQueue.h"
 
-void testSimpleEnqueueDequeue();
-void testEnqueueDequeueAll();
-void testEnqueueDequeueRepeated();
-void testEnqueueAllButOne_ThenDequeue_ThenEnqueueAllButOne();
-void testEnqueueWithReinit();
-void testTooManyElementsException();
-void testTooFewElementsException();
+int testSimpleEnqueueDequeue();
+int testEnqueueDequeueAll();
+int testEnqueueDequeueRepeated();
+int testEnqueueAllButOne_ThenDequeue_ThenEnqueueAllButOne();
+int testEnqueueWithReinit();
+int testTooManyElementsException();
+int testTooFewElementsException();
 
 int main(int argc, char** argv) {
-	testSimpleEnqueueDequeue();
-	testEnqueueDequeueAll();
-	testEnqueueDequeueRepeated();
-	testEnqueueAllButOne_ThenDequeue_ThenEnqueueAllButOne();
+    int errors = 0;
+	errors += testSimpleEnqueueDequeue();
+	errors += testEnqueueDequeueAll();
+	errors += testEnqueueDequeueRepeated();
+	errors += testEnqueueAllButOne_ThenDequeue_ThenEnqueueAllButOne();
 
-	testEnqueueWithReinit();
+	errors += testEnqueueWithReinit();
 
-	testTooManyElementsException();
-	testTooFewElementsException();
-	return 0;
+	errors += testTooManyElementsException();
+	errors += testTooFewElementsException();
+	return errors;
 }
 
-void testSimpleEnqueueDequeue() {
+int testSimpleEnqueueDequeue() {
 	QUnit::UnitTest qunit(std::cerr, QUnit::normal);
 
 	BoundedQueue q(1);
 	q.enqueue(0);
 	QUNIT_IS_EQUAL(0, q.dequeue());
+    return qunit.errors();
 }
 
-void testEnqueueDequeueAll() {
+int testEnqueueDequeueAll() {
 	QUnit::UnitTest qunit(std::cerr, QUnit::normal);
 
 	int size = 5;
@@ -45,9 +47,10 @@ void testEnqueueDequeueAll() {
 	for(int i = 0; i < size; i++) {
 		QUNIT_IS_EQUAL(i, q.dequeue());
 	}
+    return qunit.errors();
 }
 
-void testEnqueueDequeueRepeated() {
+int testEnqueueDequeueRepeated() {
 	QUnit::UnitTest qunit(std::cerr, QUnit::normal);
 
 	int numRepetitions = 5;
@@ -58,9 +61,10 @@ void testEnqueueDequeueRepeated() {
 		int result = q.dequeue();
 		QUNIT_IS_EQUAL(i, result);
 	}
+    return qunit.errors();
 }
 
-void testEnqueueAllButOne_ThenDequeue_ThenEnqueueAllButOne() {
+int testEnqueueAllButOne_ThenDequeue_ThenEnqueueAllButOne() {
 	QUnit::UnitTest qunit(std::cerr, QUnit::normal);
 
 	int size = 5;
@@ -78,9 +82,10 @@ void testEnqueueAllButOne_ThenDequeue_ThenEnqueueAllButOne() {
 	for(int i = 0; i < size - 1; i++ ) {
 		QUNIT_IS_EQUAL(i, q.dequeue());
 	}
+    return qunit.errors();
 }
 
-void testEnqueueWithReinit() {
+int testEnqueueWithReinit() {
 	QUnit::UnitTest qunit(std::cerr, QUnit::normal);
 
 	BoundedQueue q(5);
@@ -89,9 +94,10 @@ void testEnqueueWithReinit() {
 	q.reinit();
 	q.enqueue(1);
 	QUNIT_IS_EQUAL(1, q.dequeue());
+    return qunit.errors();
 }
 
-void testTooManyElementsException() {
+int testTooManyElementsException() {
 	QUnit::UnitTest qunit(std::cerr, QUnit::normal);
 	BoundedQueue q(1);
 	try {
@@ -102,9 +108,10 @@ void testTooManyElementsException() {
 	catch(const std::runtime_error& ex) {
 		QUNIT_IS_TRUE(true);
 	}
+    return qunit.errors();
 }
 
-void testTooFewElementsException() {
+int testTooFewElementsException() {
 	QUnit::UnitTest qunit(std::cerr, QUnit::normal);
 	BoundedQueue q(1);
 
@@ -115,4 +122,5 @@ void testTooFewElementsException() {
 	catch(const std::runtime_error& ex) {
 		QUNIT_IS_TRUE(true);
 	}
+    return qunit.errors();
 }
